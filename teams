@@ -47,6 +47,69 @@ class CmdTeamCreateCSV(CmdBase):
     def __init__(self, args):
         CmdBase.__init__(self, args)
 
+class CmdTeamInfo(CmdBase):
+    desc = "Show information about a team"
+    usage = "TEAM_NUMBER"
+    min_args, max_args = 1, 1
+
+    def __init__(self, args):
+        CmdBase.__init__(self, args)
+
+        tg = get_team(int(args[0]))
+        if not tg.in_db:
+            print "Team %i do not exist" % int(args[0])
+            sys.exit(1)
+
+        # Group people into teachers, students, mentors and misc:
+        g = ["teachers", "students", "mentors"]
+        groups = {}
+        team_grouped = {}
+
+        for gname in g:
+            groups[gname] = sr.group(gname)
+            team_grouped[gname] = []
+
+        for uname in tg.members:
+            for gname, g in groups.iteritems():
+                if uname in g.members:
+                    team_grouped[gname].append(uname)
+
+        if hasattr(tg, "desc"):
+            print "Team %i: %s" % (int(args[0]), tg.desc)
+        else:
+            print "Team", int(args[0]), "(no description)"
+        print
+
+        for status, ulist in team_grouped.iteritems():
+            if len(ulist):
+                print len(ulist), "%s:" % status
+                ulist.sort()
+
+                for u in ulist:
+                    print "\t%s" % u
+                print
+            else:
+                print "No %s." % status
+
+        # Work out what college they're from
+        college_gnames = set()
+
+        for uname in team_grouped["students"] + team_grouped["teachers"]:
+            u = sr.user(uname)
+            assert u.in_db
+
+            for gname in u.groups():
+                if re.match( "^college-[0-9]+$", gname ) != None:
+                    college_gnames.add( gname )
+
+        college_gnames = list(college_gnames)
+        college_gnames.sort()
+        if len(college_gnames):
+            print "Colleges:"
+            for gname in college_gnames:
+                print  "\t%s" % gname
+        else:
+            print "No associated college."
 
 class CmdCollegeList(CmdBase):
     desc = "List colleges"
@@ -97,7 +160,8 @@ class CmdCollegeCreate(CmdBase):
 class CmdTeams:
     desc = "Team management commands"
     cmds = { "list": CmdTeamList,
-             "from-csv": CmdTeamCreateCSV } 
+             "from-csv": CmdTeamCreateCSV,
+             "info": CmdTeamInfo } 
 
     def __init__(self, args):
         if len(args) < 1 or args[0] not in self.cmds:
