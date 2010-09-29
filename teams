@@ -150,10 +150,53 @@ class CmdTeamCreateCSV(CmdBase):
             for field, fn in score_funcs.iteritems():
                 scores[colnum][field] += fn(col)
 
-        print "Estimated columns:"
         for colname in cols.keys():
             colscores = [x[colname] for x in scores]
-            print "\t",colname, self.find_max_score(colscores)
+            cols[colname] = self.find_max_score(colscores)[0]
+
+        while True:
+            print "*" * 40
+            print "Column arrangement:"
+            print cols
+
+            print
+            print " y = yes, create this team."
+            print " change COLNAME colnum"
+            print " q = quit this utility"
+            print " e = show an example line"
+            print "Command:",
+
+            resp = raw_input()
+            if len(resp) == 0:
+                continue
+
+            if resp[0] == "y":
+                break
+
+            if resp == "q":
+                sys.exit(1)
+
+            if resp == "e":
+                print rows[0]
+                continue
+
+            ss = resp.split()
+            if ss[0] == "change":
+                if len(ss) < 3:
+                    print "Please specify a column name and number"
+                    continue
+                colname, num = ss[1], int(ss[2])
+                if not cols.has_key(colname):
+                    print "Invalid field name \"%s\"." % colname
+                    continue
+                if num >= max_cols or num < 0:
+                    print "Invalid column number."
+                    continue
+
+                cols[colname] = num
+
+        return cols
+
 
     def find_max_score(self, colscores):
         m = max(colscores)
