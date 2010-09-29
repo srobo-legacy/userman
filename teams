@@ -1,0 +1,149 @@
+#!/bin/env python
+import os, sys, csv, sr, re
+
+def get_team(num):
+    return sr.group( "team%i" % num )
+
+def get_college(num):
+    return sr.group( "college-%i" % num )
+
+class CmdBase:
+    def __init__(self, args):
+        abort = False
+
+        if hasattr(self, "min_args") and len(args) < self.min_args:
+            print "Too few arguments to command."
+            abort = True
+
+        if hasattr(self, "max_args") and len(args) > self.max_args:
+            print "Too many arguments to command"
+            abort = True
+
+        if abort:
+            if hasattr(self, "usage"):
+                print "Usage: %s" % self.usage
+            sys.exit(1)
+
+class CmdTeamList(CmdBase):
+    desc = "List the teams"
+    max_args = 0
+
+    def __init__(self, args):
+        CmdBase.__init__(self, args)
+
+        glist = sr.groups.list()
+
+        for gname in glist:
+            if re.match( "^team[0-9]+$", gname ) == None:
+                continue
+
+            print gname
+
+class CmdTeamCreateCSV(CmdBase):
+    desc = "Create a new team from a CSV file"
+    usage = "COLLEGE_NUMBER CSV_FILE"
+    min_args = 2
+
+    def __init__(self, args):
+        CmdBase.__init__(self, args)
+
+
+class CmdCollegeList(CmdBase):
+    desc = "List colleges"
+    max_args = 0
+
+    def __init__(self, args):
+        CmdBase.__init__(self, args)
+
+        glist = sr.groups.list()
+
+        for gname in glist:
+            if re.match( "^college-[0-9]+$", gname ) == None:
+                continue
+
+            g = sr.group(gname)
+
+            if hasattr(g, "desc"):
+                desc = g.desc
+            else:
+                desc = "(no description)"
+
+            print "%s: %s" % (gname, desc)
+
+class CmdCollegeCreate(CmdBase):
+    desc = "Create a new college"
+    usage = "colleges create DESCRIPTION"
+    min_args, max_args = 1,1
+
+    def __init__(self, args):
+        CmdBase.__init__(self, args)
+        desc = args[0]
+
+        g = self.next_free_college()
+        g.desc = desc
+        g.save()
+
+        print "Created college group \"%s\"" % g.name
+
+    def next_free_college(self):
+        i = 1
+
+        while True:
+            cg = get_college(i)
+            if not cg.in_db:
+                return cg
+            i += 1
+
+class CmdTeams:
+    desc = "Team management commands"
+    cmds = { "list": CmdTeamList,
+             "from-csv": CmdTeamCreateCSV } 
+
+    def __init__(self, args):
+        if len(args) < 1 or args[0] not in self.cmds:
+            if len(args):
+                print "Invalid command"
+
+            print "Usage: teams teams CMD"
+            print "Where command can be:"
+            for cmd_name, cmdf in self.cmds.iteritems():
+                print "\t%s: %s" % ( cmd_name, cmdf.desc )
+            sys.exit(1)
+
+        self.cmds[args[0]](args[1:])
+
+class CmdColleges:
+    desc = "Team management commands"
+    cmds = { "list": CmdCollegeList,
+             "create": CmdCollegeCreate } 
+
+    def __init__(self, args):
+        if len(args) < 1 or args[0] not in self.cmds:
+            if len(args):
+                print "Invalid command"
+
+            print "Usage: teams colleges CMD"
+            print "Where command can be:"
+            for cmd_name, cmdf in self.cmds.iteritems():
+                print "\t%s: %s" % ( cmd_name, cmdf.desc )
+            sys.exit(1)
+
+        self.cmds[args[0]](args[1:])
+
+cmds = { "teams" : CmdTeams,
+         "colleges" : CmdColleges }
+
+if len(sys.argv) < 2:
+    print "Usage: teams CMD [ARGS]"
+    print "Available commands:"
+    for cmd in cmds.keys():
+        print "\t",cmd
+    sys.exit(1)
+
+CMD = sys.argv[1]
+
+if CMD not in cmds:
+    print "Unknown command"
+    sys.exit(1)
+
+cmds[CMD](sys.argv[2:])
