@@ -79,18 +79,101 @@ class CmdTeamList(CmdBase):
 class CmdTeamCreateCSV(CmdBase):
     desc = "Create a new team from a CSV file"
     usage = "COLLEGE_(NUMBER|SUBSTR) CSV_FILE"
-    min_args = 2
+    min_args, max_args = 2, 2
 
     def __init__(self, args):
         CmdBase.__init__(self, args)
         CDESC, CSV_FNAME = args[0], args[1]
 
         cg = college_find( CDESC )
-        r = csv.reader(open( CSV_FNAME, "r" ))
+        rows = self.read_csv( CSV_FNAME )
 
+        self.discover_columns(rows)
+
+    def score_fname(self, col):
+        fname = os.path.join( os.path.dirname(__file__), "data/yob2009.txt" )
+        census = csv.reader( open(fname, "r") )
+        census_fnames = set()
+        for row in census:
+            census_fnames.add( row[0].upper() )
+
+        s = 0
+        col = [x.upper() for x in col]
+        for val in col:
+            if val in census_fnames:
+                s += 1
+
+        return s
+
+    def score_lname(self, col):
+        fname = os.path.join( os.path.dirname(__file__), "data/surnames.txt" )
+        census = open(fname, "r")
+
+        census_lnames = set()
+        for row in census.readlines():
+            census_lnames.add( row.strip().upper() )
+
+        s = 0
+        col = [x.strip().upper() for x in col]
+        for val in col:
+            if val in census_lnames:
+                s += 1
+
+        return s
+
+    def score_email(self, col):
+        s = 0
+
+        for val in col:
+            if '@' in val:
+                s += 1
+
+        return s
+
+    def discover_columns(self, rows):
+        "Return a map of columns to use given csv rows"
+        score_funcs = { "fname": self.score_fname,
+                        "lname": self.score_lname,
+                        "email": self.score_email }
+        cols = { "fname":0, "lname":0, "email":0 }
+        max_cols = max([len(row) for row in rows])
+        scores = [dict(cols) for x in range(0, max_cols)]
+
+        for colnum in range(0, max_cols):
+            col = []
+            for row in rows:
+                try:
+                    col.append( row[colnum] )
+                except IndexError:
+                    pass
+
+            for field, fn in score_funcs.iteritems():
+                scores[colnum][field] += fn(col)
+
+        print "Estimated columns:"
+        for colname in cols.keys():
+            colscores = [x[colname] for x in scores]
+            print "\t",colname, self.find_max_score(colscores)
+
+    def find_max_score(self, colscores):
+        m = max(colscores)
+        n = 0
+        cols = []
+        for score in colscores:
+            if score == m:
+                cols.append(n)
+            n += 1
+        return cols
+
+    def read_csv(self, fname):
+        csvfile = open( fname, "r" )
+        r = csv.reader(csvfile)
+        rows = []
+        
         for row in r:
-            fname, lname, email = row
+            rows.append(row)
 
+        return rows
 
 class CmdTeamInfo(CmdBase):
     desc = "Show information about a team"
