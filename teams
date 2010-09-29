@@ -7,6 +7,43 @@ def get_team(num):
 def get_college(num):
     return sr.group( "college-%i" % num )
 
+def search_colleges(s):
+    "Search through the colleges to find one with s its name"
+    groups = sr.groups.list("college-*")
+
+    res = []
+
+    for gname in groups:
+        group = sr.group(gname)
+
+        if s.upper() in group.desc.upper():
+            res.append(group)
+
+    return res    
+
+def college_find( numsub ):
+    colnum = None
+    try:
+        colnum = int(numsub)
+    except ValueError:
+        pass
+
+    if colnum == None:
+        cols = search_colleges(numsub)
+    else:
+        return get_college(colnum)
+
+    if len(cols) > 1:
+        # TODO: prompt the user
+        print "\"%s\" matches more than one college." % numsub
+        sys.exit(1)
+
+    if len(cols) == 0:
+        print "\"%s\" matches no colleges." % numsub
+        sys.exit(1)
+
+    return cols[0]
+
 class CmdBase:
     def __init__(self, args):
         abort = False
@@ -41,11 +78,19 @@ class CmdTeamList(CmdBase):
 
 class CmdTeamCreateCSV(CmdBase):
     desc = "Create a new team from a CSV file"
-    usage = "COLLEGE_NUMBER CSV_FILE"
+    usage = "COLLEGE_(NUMBER|SUBSTR) CSV_FILE"
     min_args = 2
 
     def __init__(self, args):
         CmdBase.__init__(self, args)
+        CDESC, CSV_FNAME = args[0], args[1]
+
+        cg = college_find( CDESC )
+        r = csv.reader(open( CSV_FNAME, "r" ))
+
+        for row in r:
+            fname, lname, email = row
+
 
 class CmdTeamInfo(CmdBase):
     desc = "Show information about a team"
