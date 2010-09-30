@@ -44,6 +44,33 @@ def college_find( numsub ):
 
     return cols[0]
 
+def new_username( fname, lname ):
+    fname = fname.lower()
+    lname = lname.lower()
+
+    u = sr.user( "%s%s" % (fname[0], lname) )
+    n = 1
+    while u.in_db:
+        u = sr.user( "%s%s%i" % (fname[0], lname, n) )
+        n += 1
+
+    return u.username
+
+def print_table( rows ):
+    widths = []
+    for colnum in range(0, len(rows[0])):
+        w = 0
+        for row in rows:
+            w = max(w, len(row[colnum]))
+        widths.append(w)
+
+    for row in rows:
+        for colnum in range(0, len(row)):
+            v = row[colnum]
+            sys.stdout.write( v )
+            sys.stdout.write( " " * (4 + widths[colnum] - len(v)) )
+        sys.stdout.write( "\n" )
+
 class CmdBase:
     def __init__(self, args):
         abort = False
@@ -86,9 +113,34 @@ class CmdTeamCreateCSV(CmdBase):
         CDESC, CSV_FNAME = args[0], args[1]
 
         cg = college_find( CDESC )
-        rows = self.read_csv( CSV_FNAME )
+        newusers = self.form_new_users( CSV_FNAME )
 
-        self.discover_columns(rows)
+        print "Will create %i users" % len(newusers)
+
+        disp = [["username", "fname", "lname", "email"]]
+        disp += [ [u.username, u.cname, u.sname, u.email] for u in newusers ]
+        print_table( disp )
+
+    def form_new_users(self, csv_fname):
+        "Create the new user objects -- not in db yet."
+        rows = self.read_csv( csv_fname )
+
+        # Returns dictionary
+        # keys are columns, values are column numbers
+        colmap = self.discover_columns(rows)
+
+        newusers = []
+
+        for row in rows:
+            fname, lname, email = [row[colmap[x]] for x in ["fname", "lname", "email"]]
+
+            u = sr.user( new_username(fname, lname) )
+            u.cname = fname.strip().capitalize()
+            u.sname = lname.strip().capitalize()
+            u.email = email.strip().lower()
+            newusers.append(u)
+
+        return newusers
 
     def score_fname(self, col):
         fname = os.path.join( os.path.dirname(__file__), "data/yob2009.txt" )
