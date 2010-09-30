@@ -56,6 +56,16 @@ def new_username( fname, lname ):
 
     return u.username
 
+def new_team():
+    i = 1
+    tg = get_team(i)
+
+    while tg.in_db:
+        i += 1
+        tg = get_team(i)
+
+    return i
+
 def print_table( rows ):
     widths = []
     for colnum in range(0, len(rows[0])):
@@ -112,14 +122,39 @@ class CmdTeamCreateCSV(CmdBase):
         CmdBase.__init__(self, args)
         CDESC, CSV_FNAME = args[0], args[1]
 
-        cg = college_find( CDESC )
+        college_group = college_find( CDESC )
         newusers = self.form_new_users( CSV_FNAME )
 
+        print
         print "Will create %i users" % len(newusers)
 
         disp = [["username", "fname", "lname", "email"]]
         disp += [ [u.username, u.cname, u.sname, u.email] for u in newusers ]
         print_table( disp )
+
+        teamno = new_team()
+        print
+        print "They will form team %i." % teamno
+        print "And will be associated with %s: %s." % ( college_group.name, college_group.desc )
+
+        students_group = sr.group("students")
+        team_group = get_team(teamno)
+
+        print "Is this OK? (yes/no)",
+        resp = raw_input()
+        resp = resp.lower().strip()
+
+        if resp == "yes":
+            print "Creating users..."
+
+            for u in newusers:
+                print "\t", u.username
+                #u.save()
+
+            print "Saving groups."
+            for g in students_group, team_group, college_group:
+                g.user_add(newusers)
+                #g.save()
 
     def form_new_users(self, csv_fname):
         "Create the new user objects -- not in db yet."
