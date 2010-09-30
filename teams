@@ -266,7 +266,7 @@ class CmdTeamCreateCSV(CmdBase):
         rows = []
         
         for row in r:
-            rows.append(row)
+            rows.append([x.strip() for x in row])
 
         return rows
 
