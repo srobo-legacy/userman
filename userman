@@ -1,16 +1,22 @@
 #!/bin/env python
 import sys, getpass
-import c_user, c_group
+import c_user, c_group, c_teams
+
+commands = { "college": c_teams.CmdColleges,
+             "group": c_group.group,
+             "team": c_teams.CmdTeams,
+             "user": c_user.user }
 
 def usage():
     print """Usage:
     %s command command_args
 
-    Where command is one of:
-    	user
-        group
+    Where command is one of:""" % sys.argv[0]
 
-    Type %s COMMAND help to get more information.""" % (sys.argv[0], sys.argv[0])
+    for c in commands.keys():
+        print "\t%s" % c
+
+    print """Type %s COMMAND help to get more information.""" % sys.argv[0]
 
 def c_help(args):
     global commands
@@ -24,10 +30,6 @@ def c_help(args):
 
     sys.exit(0)
 
-commands = { "user":c_user.user,
-             "group":c_group.group,
-             "help":c_help }
-
 if len(sys.argv) < 2:
     usage()
     sys.exit(1)
@@ -40,5 +42,6 @@ if cmd in commands.keys():
         args = []
 
     commands[cmd]( args )
-
-
+else:
+    print "Invalid command."
+    usage()

@@ -425,11 +425,13 @@ class CmdTeams:
         if len(args) < 1 or args[0] not in self.cmds:
             if len(args):
                 print "Invalid command"
+            else:
+                print "Manage teams.\n"
 
-            print "Usage: teams teams CMD"
-            print "Where command can be:"
+            print "Valid subcommands:"
+
             for cmd_name, cmdf in self.cmds.iteritems():
-                print "\t%s: %s" % ( cmd_name, cmdf.desc )
+                print "     - %s: %s" % ( cmd_name, cmdf.desc )
             sys.exit(1)
 
         self.cmds[args[0]](args[1:])
@@ -443,29 +445,11 @@ class CmdColleges:
         if len(args) < 1 or args[0] not in self.cmds:
             if len(args):
                 print "Invalid command"
-
-            print "Usage: teams colleges CMD"
-            print "Where command can be:"
+            else:
+                print "Manage college groups.\n"
+            print "Valid subcommands:"
             for cmd_name, cmdf in self.cmds.iteritems():
-                print "\t%s: %s" % ( cmd_name, cmdf.desc )
+                print "     - %s: %s" % ( cmd_name, cmdf.desc )
             sys.exit(1)
 
         self.cmds[args[0]](args[1:])
-
-cmds = { "teams" : CmdTeams,
-         "colleges" : CmdColleges }
-
-if len(sys.argv) < 2:
-    print "Usage: teams CMD [ARGS]"
-    print "Available commands:"
-    for cmd in cmds.keys():
-        print "\t",cmd
-    sys.exit(1)
-
-CMD = sys.argv[1]
-
-if CMD not in cmds:
-    print "Unknown command"
-    sys.exit(1)
-
-cmds[CMD](sys.argv[2:])
