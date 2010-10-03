@@ -52,23 +52,16 @@ Your username is: %s
 Your password is: %s
 
 Your registered email address is %s.
-If you want to change this, or you have any problems with your account
-please get in touch - by emailing accounts@studentrobotics.org.
 
-The next thing for you to do is to go and log into the website
-(http://www.studentrobotics.org/) to:
+You can change your password at:
 
- 1) Change your password
-    Click "My account", then "Edit" to find the password changing form.
- 2) Introduce yourself on the forums
-    Send a message to the "Introduce yourself" forum.  We hope that you 
-    will use these forums for discussing the competition with other teams.
- 3) Use RoboIDE -- find a link to this at the top of the page after
-    logging in.  You can also get to this by going straight to:
-    http://ide.studentrobotics.org/
+	https://www.studentrobotics.org/password
 
-The competition rules have just become available.  Find them on this
-page: http://www.studentrobotics.org/content/2010-documentation
+If you have any problems with your account then please get in touch by
+emailing accounts@studentrobotics.org.
+
+So go introduce yourself to everyone on the forums, and enjoy building
+your robots.
 
 Thanks,
 
