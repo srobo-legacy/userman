@@ -86,14 +86,15 @@ Usage:
             print self.delete.__doc__
             return
 
-        g = sr.group( args[0] )
+        for gname in args:
+            g = sr.group( gname )
 
-        if not g.in_db:
-            print "Group '%s' doesn't exist" % ( args[0] )
-            return
+            if not g.in_db:
+                print "Group '%s' doesn't exist" % ( gname )
+                continue
 
-        g.rm()
-        print "Group '%s' deleted." % (args[0] )
+            g.rm()
+            print "Group '%s' deleted." % ( gname )
 
     def members(self, args):
         """Display group members.
