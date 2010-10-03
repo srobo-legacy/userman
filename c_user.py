@@ -88,24 +88,25 @@ Usage:
     def delete(self, args):
         """Delete a user.
 Usage:
-	user rm USERNAME"""
+	user rm USERNAME(S)"""
         if len(args) < 1:
             print self.delete.__doc__
             return
 
-        u = sr.users.user( args[0] )
-        groups = u.groups()
+        for username in args:
+            u = sr.users.user( username )
+            groups = u.groups()
 
-        if u.delete():
-            print "User '%s' deleted" % (args[0])
+            if u.delete():
+                print "User '%s' deleted" % (username)
 
-            for group in groups:
-                g = sr.group(group)
-                g.user_rm(args[0])
-                g.save()
+                for group in groups:
+                    g = sr.group(group)
+                    g.user_rm(username)
+                    g.save()
 
-        else:
-            print "Error: User '%s' could not be deleted"
+            else:
+                print "Error: User '%s' could not be deleted"
 
     def info(self, args):
         """Print information about a user.
