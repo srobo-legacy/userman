@@ -30,18 +30,17 @@ def c_help(args):
 
     sys.exit(0)
 
+def exec_cmd(args):
+    cmd = args[0]
+
+    if cmd in commands.keys():
+        commands[cmd]( args[1:] )
+    else:
+        print "Invalid command."
+        usage()
+
 if len(sys.argv) < 2:
     usage()
     sys.exit(1)
 
-cmd = sys.argv[1]
-if cmd in commands.keys():
-    if len(sys.argv) > 2:
-        args = sys.argv[2:]
-    else:
-        args = []
-
-    commands[cmd]( args )
-else:
-    print "Invalid command."
-    usage()
+exec_cmd(sys.argv[1:])
