@@ -45,14 +45,18 @@ def college_find( numsub ):
     return cols[0]
 
 def new_username( fname, lname ):
-    fname = fname.lower()
-    lname = lname.lower()
+    prefix = "%s%s" % (fname[0], lname[0])
+    prefix = prefix.lower()
 
-    u = sr.user( "%s%s" % (fname[0], lname) )
+    def c(i):
+        return "%s%i" % (prefix, i)
+
     n = 1
+    u = sr.user( c(n) )
+
     while u.in_db:
-        u = sr.user( "%s%s%i" % (fname[0], lname, n) )
         n += 1
+        u = sr.user( c(n) )
 
     return u.username
 
