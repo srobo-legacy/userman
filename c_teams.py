@@ -1,5 +1,6 @@
 #!/bin/env python
 import os, sys, csv, sr, re
+import mailer
 
 def get_team(num):
     return sr.group( "team%i" % num )
@@ -153,12 +154,16 @@ class CmdTeamCreateCSV(CmdBase):
 
             for u in newusers:
                 print "\t", u.username
-                #u.save()
+                passwd = sr.users.GenPasswd()
+                # Password has to be set after user is in db
+                u.save()
+                u.set_passwd( new = passwd )
+                mailer.email_pass( u, passwd )
 
             print "Saving groups."
             for g in students_group, team_group, college_group:
                 g.user_add(newusers)
-                #g.save()
+                g.save()
 
     def form_new_users(self, csv_fname):
         "Create the new user objects -- not in db yet."
