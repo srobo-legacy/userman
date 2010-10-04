@@ -120,8 +120,8 @@ class CmdTeamList(CmdBase):
 
 class CmdTeamCreateCSV(CmdBase):
     desc = "Create a new team from a CSV file"
-    usage = "COLLEGE_(NUMBER|SUBSTR) CSV_FILE"
-    min_args, max_args = 2, 2
+    usage = "COLLEGE_(NUMBER|SUBSTR) CSV_FILE [TEAMNO]"
+    min_args, max_args = 2, 3
 
     def __init__(self, args):
         CmdBase.__init__(self, args)
@@ -137,7 +137,10 @@ class CmdTeamCreateCSV(CmdBase):
         disp += [ [u.username, u.cname, u.sname, u.email] for u in newusers ]
         print_table( disp )
 
-        teamno = new_team()
+        if len(args) == 3:
+            teamno = int(args[2])
+        else:
+            teamno = new_team()
         print
         print "They will form team %i." % teamno
         print "And will be associated with %s: %s." % ( college_group.name, college_group.desc )
