@@ -403,6 +403,30 @@ class CmdCollegeList(CmdBase):
 
             print "%s: %s" % (gname, desc)
 
+class CmdCollegeInfo(CmdBase):
+    desc = "Show information about a college"
+    usage = "COLLEGE_(NUMBER|SUBSTR)"
+    min_args, max_args = 1,1
+
+    def __init__(self, args):
+        CmdBase.__init__(self, args)
+        CDESC = args[0]
+        college = college_find( CDESC )
+        print "%s: %s" % (college.name , college.desc)
+
+        teams = set()
+
+        for uname in college.members:
+            u = sr.user(uname)
+
+            for g in u.groups():
+                if re.match( "^team[0-9]+$", g ) != None:
+                    teams.add(g)
+
+        print "Teams:"
+        for team in teams:
+            print "\t -", team
+
 class CmdCollegeCreate(CmdBase):
     desc = "Create a new college"
     usage = "colleges create DESCRIPTION"
@@ -450,7 +474,8 @@ class CmdTeams:
 
 class CmdColleges:
     desc = "Team management commands"
-    cmds = { "list": CmdCollegeList,
+    cmds = { "info" : CmdCollegeInfo,
+             "list": CmdCollegeList,
              "create": CmdCollegeCreate } 
 
     def __init__(self, args):
