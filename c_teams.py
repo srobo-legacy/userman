@@ -45,7 +45,7 @@ def college_find( numsub ):
 
     return cols[0]
 
-def new_username( fname, lname ):
+def new_username( fname, lname, tmpset = [] ):
     prefix = "%s%s" % (fname[0], lname[0])
     prefix = prefix.lower()
 
@@ -55,7 +55,7 @@ def new_username( fname, lname ):
     n = 1
     u = sr.user( c(n) )
 
-    while u.in_db:
+    while u.in_db and u.username not in tmpset:
         n += 1
         u = sr.user( c(n) )
 
@@ -178,7 +178,7 @@ class CmdTeamCreateCSV(CmdBase):
         for row in rows:
             fname, lname, email = [row[colmap[x]] for x in ["fname", "lname", "email"]]
 
-            u = sr.user( new_username(fname, lname) )
+            u = sr.user( new_username(fname, lname, tmpset = [x.username for x in newusers]) )
             u.cname = fname.strip().capitalize()
             u.sname = lname.strip().capitalize()
             u.email = email.strip().lower()
