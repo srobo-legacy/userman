@@ -1,0 +1,24 @@
+#!/bin/env python
+import sr, sys, os
+
+if len(sys.argv) < 2:
+    print "Usage: student-to-teacher USERNAME"
+    sys.exit(1)
+
+UNAME = sys.argv[1]
+
+u = sr.user(UNAME)
+
+if not u.in_db:
+    print "User \"%s\" does not exist." % UNAME
+    sys.exit(1)
+
+students = sr.group("students")
+assert students.in_db
+students.user_rm( UNAME )
+students.save()
+
+teachers = sr.group("teachers")
+assert teachers.in_db
+teachers.user_add( UNAME )
+teachers.save()
