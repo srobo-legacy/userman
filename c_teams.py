@@ -402,6 +402,21 @@ class CmdCollegeList(CmdBase):
                 desc = "(no description)"
 
             print "%s: %s" % (gname, desc)
+            print "\t %i members." % len(g.members)
+
+            teams = set()
+            for uname in g.members:
+                u = sr.user(uname)
+                assert u.in_db
+
+                for gname in u.groups():
+                    if re.match( "^team[0-9]+$", gname ) != None:
+                        teams.add(gname)
+
+            print "\t %i teams: %s" % (len(teams),
+                                    ", ".join([x[4:] for x in teams]) )
+            print
+
 
 class CmdCollegeInfo(CmdBase):
     desc = "Show information about a college"
