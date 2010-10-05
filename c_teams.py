@@ -55,7 +55,7 @@ def new_username( fname, lname, tmpset = [] ):
     n = 1
     u = sr.user( c(n) )
 
-    while u.in_db and u.username not in tmpset:
+    while u.in_db or u.username in tmpset:
         n += 1
         u = sr.user( c(n) )
 
