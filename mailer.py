@@ -1,6 +1,6 @@
 #!/bin/env python
 import smtplib, getpass
-import sr
+import sr, os
 
 fromaddr = "rspanton@studentrobotics.org"
 #toaddr = "rspanton@gmail.com"
@@ -41,33 +41,27 @@ def email( fromaddr, toaddr, subject, msg, smtp_pass = None ):
     except smtplib.sslerror:
         pass
 
-def email_pass( user,p, smtp_pass = None ):
-    msg = """Hello %s,
+def send_template( template_name, user, extravars = [] ):
+    "Send the template with the given name to the given user"
+    lang = user.get_lang()
 
-You now have a shiny new Student Robotics account.  This will let you
-access the Student Robotics facilities, including the forums and the
-software development environment for your robot.
+    script_dir = os.path.dirname( __file__ )
+    temp_path = os.path.join( script_dir, "msg", lang, template_name )
 
-Your username is: %s
-Your password is: %s
+    msg = open( temp_path, "r" ).read()
 
-Your registered email address is %s.
+    subject = msg.splitlines()[0]
+    assert subject[:8] == "Subject:"
+    subject = subject[8:].strip()
 
-You can change your password at:
+    msg = "\n".join(msg.splitlines()[1:])
 
-	https://www.studentrobotics.org/password
+    v = { "NAME": user.cname,
+          "USERNAME": user.username,
+          "EMAIL": user.email }
+    v.update(extravars)
 
-If you have any problems with your account then please get in touch by
-emailing accounts@studentrobotics.org.
+    for vname, val in v.iteritems():
+        msg = msg.replace( "$%s" % vname, val )
 
-So go introduce yourself to everyone on the forums, and enjoy building
-your robots.
-
-Thanks,
-
-The Student Robotics Team
-
-""" % ( user.cname, user.username, p, user.email )
-
-    email( fromaddr, user.email, subject, msg, smtp_pass )
-
+    email( fromaddr, user.email, subject, msg, None )

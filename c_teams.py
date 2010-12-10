@@ -161,7 +161,7 @@ class CmdTeamCreateCSV(CmdBase):
                 # Password has to be set after user is in db
                 u.save()
                 u.set_passwd( new = passwd )
-                mailer.email_pass( u, passwd )
+                mailer.send_template( "welcome", u, { "PASSWORD": passwd } )
 
             print "Saving groups."
             for g in students_group, team_group, college_group:

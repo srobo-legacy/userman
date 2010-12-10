@@ -150,7 +150,7 @@ Usage:
         if not u.save():
             return False
 
-        mailer.email_pass( u, u.init_passwd )
+        mailer.send_template( "welcome", u, { "PASSWORD": u.init_passwd } )
         print "User '%s' created and mailed." % (args[0])
         
     def passwd(self,args):
