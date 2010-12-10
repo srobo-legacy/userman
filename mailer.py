@@ -30,12 +30,19 @@ def email( fromaddr, toaddr, subject, msg, smtp_pass = None ):
 
     msg = "From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s" % (fromaddr, toaddr, subject, msg)
 
-    server = smtplib.SMTP(smtpserver)
+    server = smtplib.SMTP(smtpserver, timeout = 5)
     server.ehlo()
     server.starttls()
     server.ehlo()
     server.login(username, smtp_pass)
-    print server.sendmail(fromaddr, toaddr, msg)
+
+    print "Emailing...",
+    r = server.sendmail(fromaddr, toaddr, msg)
+    if len(r):
+        print " FAILED."
+    else:
+        print " OK."
+
     try:
         server.quit()
     except smtplib.sslerror:
