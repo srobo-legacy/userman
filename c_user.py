@@ -193,27 +193,7 @@ Usage:
 
         new_passwd = sr.users.GenPasswd()
         u.set_passwd( new = new_passwd )
-
-        msg = """Hi %s,
-Your student robotics password has been changed.  Your login details
-are now:
-
-  Username: %s
-  Password: %s
-
-You can change your password at:
-
-http://www.studentrobotics.org/passwd
-
-Thanks,
-
-The Student Robotics Team
-""" % (u.cname,uname,new_passwd)
-
-        mailer.email( mailer.fromaddr,
-                      u.email,
-                      "New Student Robotics Password",
-                      msg )
+        mailer.send_template( "new-password", u, { "PASSWORD": new_passwd } )
         return True
 
     def groups(self, args):
