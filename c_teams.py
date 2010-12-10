@@ -120,8 +120,8 @@ class CmdTeamList(CmdBase):
 
 class CmdTeamCreateCSV(CmdBase):
     desc = "Create a new team from a CSV file"
-    usage = "COLLEGE_(NUMBER|SUBSTR) CSV_FILE [TEAMNO]"
-    min_args, max_args = 2, 3
+    usage = "COLLEGE_(NUMBER|SUBSTR) CSV_FILE [lang=LANG] [team=TEAMNO]"
+    min_args, max_args = 2, 4
 
     def __init__(self, args):
         CmdBase.__init__(self, args)
@@ -137,10 +137,22 @@ class CmdTeamCreateCSV(CmdBase):
         disp += [ [u.username, u.cname, u.sname, u.email] for u in newusers ]
         print_table( disp )
 
-        if len(args) == 3:
-            teamno = int(args[2])
-        else:
+        teamno = None
+        lang = "english"
+
+        for arg in args[2:]:
+            name, val = arg.split("=")
+
+            if name == "team":
+                teamno = int(val)
+            elif name == "lang":
+                lang = val
+            else:
+                raise Exception("Unsupported argument \"%s\"", arg)
+
+        if teamno == None:
             teamno = new_team()
+
         print
         print "They will form team %i." % teamno
         print "And will be associated with %s: %s." % ( college_group.name, college_group.desc )
@@ -161,6 +173,7 @@ class CmdTeamCreateCSV(CmdBase):
                 # Password has to be set after user is in db
                 u.save()
                 u.set_passwd( new = passwd )
+                u.set_lang( lang )
                 mailer.send_template( "welcome", u, { "PASSWORD": passwd } )
 
             print "Saving groups."
