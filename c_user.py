@@ -131,7 +131,7 @@ Usage:
   * Email them the new password
 
 Usage:
-	user auto USERNAME FIRST_NAME LAST_NAME EMAIL
+	user auto USERNAME FIRST_NAME LAST_NAME EMAIL [LANG]
 """
         if len(args) < 4:
             print self.auto.__doc__
@@ -149,6 +149,12 @@ Usage:
 
         if not u.save():
             return False
+
+        if len(args) > 4:
+            u.set_lang( args[4] )
+        else:
+            "Default to English"
+            u.set_lang( "english" )
 
         mailer.send_template( "welcome", u, { "PASSWORD": u.init_passwd } )
         print "User '%s' created and mailed." % (args[0])
