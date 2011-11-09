@@ -127,7 +127,7 @@ Usage:
         g = sr.group(gname)
 
         if not g.in_db:
-            print "Group '%s' already exists" % ( gname )
+            print "Group '%s' not found." % ( gname )
             return
 
         f = g.user_add( users )
@@ -153,7 +153,7 @@ Usage:
         g = sr.group(gname)
 
         if not g.in_db:
-            print "Group '%s' already exists" % ( gname )
+            print "Group '%s' not found." % ( gname )
             return
 
         g.user_rm( users )
