@@ -1,12 +1,7 @@
 #!/bin/env python
 import smtplib, getpass
 import sr, os
-
-fromaddr = "rspanton@studentrobotics.org"
-#toaddr = "rspanton@gmail.com"
-smtpserver = "smtp.ecs.soton.ac.uk"
-username = "rds"
-subject = "Welcome to Student Robotics" 
+from config import config
 
 def def_psource():
     return getpass.getpass("SMTP Server password:")
@@ -30,11 +25,11 @@ def email( fromaddr, toaddr, subject, msg, smtp_pass = None ):
 
     msg = "From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s" % (fromaddr, toaddr, subject, msg)
 
-    server = smtplib.SMTP(smtpserver, timeout = 5)
+    server = smtplib.SMTP(config.get('mailer', 'smtpserver'), timeout = 5)
     server.ehlo()
     server.starttls()
     server.ehlo()
-    server.login(username, smtp_pass)
+    server.login(config.get('mailer', 'username'), smtp_pass)
 
     print "Emailing...",
     r = server.sendmail(fromaddr, toaddr, msg)
@@ -71,4 +66,4 @@ def send_template( template_name, user, extravars = [] ):
     for vname, val in v.iteritems():
         msg = msg.replace( "$%s" % vname, val )
 
-    email( fromaddr, user.email, subject, msg, None )
+    email( config.get('mailer', 'fromaddr'), user.email, subject, msg, None )
