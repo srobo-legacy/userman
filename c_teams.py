@@ -448,7 +448,7 @@ class CmdCollegeInfo(CmdBase):
             u = sr.user(uname)
 
             for g in u.groups():
-                if re.match( "^team[0-9]+$", g ) != None:
+                if re.match( "^team-[0-9A-Z]+$", g ) != None:
                     teams.add(g)
 
         print "Teams:"
