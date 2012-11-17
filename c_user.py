@@ -158,7 +158,7 @@ Usage:
 
         mailer.send_template( "welcome", u, { "PASSWORD": u.init_passwd } )
         print "User '%s' created and mailed." % (args[0])
-        
+
     def passwd(self,args):
         """Set the user password.
 Usage:
@@ -180,7 +180,7 @@ Usage:
         else:
             print "Failed to set password"
 
-    
+
     def rand_pass(self, args):
         """Email the user a new random password.
 Usage:
