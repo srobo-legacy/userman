@@ -163,10 +163,10 @@ Usage:
         """Set the user password.
 Usage:
 	user passwd USERNAME
-        """
+"""
 
         if len(args) < 1:
-            print self.groups.__doc__
+            print self.passwd.__doc__
             return
 
         uname = args[0]
