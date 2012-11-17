@@ -167,6 +167,7 @@ Usage:
 
         if len(args) < 1:
             print self.groups.__doc__
+            return
 
         uname = args[0]
 
