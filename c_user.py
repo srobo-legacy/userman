@@ -175,6 +175,7 @@ Usage:
 
         if not u.in_db:
             print "User '%s' not found\n" % (args[0])
+            return
 
         if u.set_passwd( new = getpass.getpass("New password:") ):
             print "Password set"
