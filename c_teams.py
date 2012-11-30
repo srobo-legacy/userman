@@ -2,8 +2,10 @@
 import os, sys, csv, sr, re
 import mailer
 
-def get_team(num):
-    return sr.group( "team%i" % num )
+TEAM_PREFIX = 'team-'
+
+def get_team(tid):
+    return sr.group( TEAM_PREFIX + str(tid) )
 
 def get_college(num):
     return sr.group( "college-%i" % num )
@@ -113,7 +115,7 @@ class CmdTeamList(CmdBase):
         glist = sr.groups.list()
 
         for gname in glist:
-            if re.match( "^team[0-9]+$", gname ) == None:
+            if re.match( '^' + TEAM_PREFIX + "[A-Z]{3}[0-9]?$", gname ) == None:
                 continue
 
             print gname
@@ -332,15 +334,16 @@ class CmdTeamCreateCSV(CmdBase):
 
 class CmdTeamInfo(CmdBase):
     desc = "Show information about a team"
-    usage = "TEAM_NUMBER"
+    usage = "TEAM_ID"
     min_args, max_args = 1, 1
 
     def __init__(self, args):
         CmdBase.__init__(self, args)
 
-        tg = get_team(int(args[0]))
+        tid = args[0]
+        tg = get_team(tid)
         if not tg.in_db:
-            print "Team %i do not exist" % int(args[0])
+            print "Team %i do not exist" % tid
             sys.exit(1)
 
         # Group people into teachers, students, mentors and misc:
@@ -357,10 +360,7 @@ class CmdTeamInfo(CmdBase):
                 if uname in g.members:
                     team_grouped[gname].append(uname)
 
-        if hasattr(tg, "desc"):
-            print "Team %i: %s" % (int(args[0]), tg.desc)
-        else:
-            print "Team", int(args[0]), "(no description)"
+        print "Team", tid
         print
 
         for status, ulist in team_grouped.iteritems():
