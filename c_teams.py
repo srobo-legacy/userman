@@ -457,7 +457,7 @@ class CmdCollegeInfo(CmdBase):
 
 class CmdCollegeCreate(CmdBase):
     desc = "Create a new college"
-    usage = "colleges create DESCRIPTION"
+    usage = "college create DESCRIPTION"
     min_args, max_args = 1,1
 
     def __init__(self, args):
