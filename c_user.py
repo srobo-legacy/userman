@@ -97,6 +97,10 @@ Usage:
             u = sr.users.user( username )
             groups = u.groups()
 
+            if not u.in_db:
+                print "User '%s' doesn't exist" % ( gname )
+                continue
+
             if u.delete():
                 print "User '%s' deleted" % (username)
 
