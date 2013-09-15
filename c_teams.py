@@ -22,7 +22,7 @@ def search_colleges(s):
         if s.upper() in group.desc.upper():
             res.append(group)
 
-    return res    
+    return res
 
 def college_find( numsub ):
     colnum = None
@@ -326,7 +326,7 @@ class CmdTeamCreateCSV(CmdBase):
         csvfile = open( fname, "r" )
         r = csv.reader(csvfile)
         rows = []
-        
+
         for row in r:
             rows.append([x.strip() for x in row])
 
@@ -483,7 +483,7 @@ class CmdTeams:
     desc = "Team management commands"
     cmds = { "list": CmdTeamList,
              "from-csv": CmdTeamCreateCSV,
-             "info": CmdTeamInfo } 
+             "info": CmdTeamInfo }
 
     def __init__(self, args):
         if len(args) < 1 or args[0] not in self.cmds:
@@ -504,7 +504,7 @@ class CmdColleges:
     desc = "Team management commands"
     cmds = { "info" : CmdCollegeInfo,
              "list": CmdCollegeList,
-             "create": CmdCollegeCreate } 
+             "create": CmdCollegeCreate }
 
     def __init__(self, args):
         if len(args) < 1 or args[0] not in self.cmds:
