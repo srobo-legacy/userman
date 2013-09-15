@@ -3,16 +3,19 @@ import os, sys, csv, sr, re
 import mailer
 
 TEAM_PREFIX = 'team-'
+TEAM_PATTERN = "^%s[0-9A-Z]+$" % TEAM_PREFIX
+COLLEGE_PREFIX = 'college-'
+COLLEGE_PATTERN = "^%s[0-9]+$" % COLLEGE_PREFIX
 
 def get_team(tid):
     return sr.group( TEAM_PREFIX + str(tid) )
 
 def get_college(num):
-    return sr.group( "college-%i" % num )
+    return sr.group( "%s%i" % (COLLEGE_PREFIX, num) )
 
 def search_colleges(s):
     "Search through the colleges to find one with s its name"
-    groups = sr.groups.list("college-*")
+    groups = sr.groups.list("%s*" % COLLEGE_PREFIX)
 
     res = []
 
@@ -368,7 +371,7 @@ class CmdTeamInfo(CmdBase):
             assert u.in_db
 
             for gname in u.groups():
-                if re.match( "^college-[0-9]+$", gname ) != None:
+                if re.match( COLLEGE_PATTERN, gname ) != None:
                     college_gnames.add( gname )
 
         college_gnames = list(college_gnames)
@@ -390,7 +393,7 @@ class CmdCollegeList(CmdBase):
         glist = sr.groups.list()
 
         for gname in glist:
-            if re.match( "^college-[0-9]+$", gname ) == None:
+            if re.match( COLLEGE_PATTERN, gname ) == None:
                 continue
 
             g = sr.group(gname)
@@ -434,7 +437,7 @@ class CmdCollegeInfo(CmdBase):
             u = sr.user(uname)
 
             for g in u.groups():
-                if re.match( "^team-[0-9A-Z]+$", g ) != None:
+                if re.match( TEAM_PATTERN, g ) != None:
                     teams.add(g)
 
         print "Teams:"
