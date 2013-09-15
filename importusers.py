@@ -12,7 +12,7 @@ if len(sys.argv) != 2:
 
 for row in csv.reader(open(sys.argv[1], 'r')):
     print repr(row)
-    newname = c_teams.new_username(row[3], row[4])
+    newname = sr.new_username(row[2], row[3], row[4])
     u =sr.users.user(newname)
     if u.in_db:
         print >>sys.stderr, "User {0} already exists".format(newname)
