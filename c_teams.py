@@ -47,22 +47,6 @@ def college_find( numsub ):
 
     return cols[0]
 
-def new_username( fname, lname, tmpset = [] ):
-    prefix = "%s%s" % (fname[0], lname[0])
-    prefix = prefix.lower()
-
-    def c(i):
-        return "%s%i" % (prefix, i)
-
-    n = 1
-    u = sr.user( c(n) )
-
-    while u.in_db or u.username in tmpset:
-        n += 1
-        u = sr.user( c(n) )
-
-    return u.username
-
 def new_team():
     i = 1
     tg = get_team(i)
@@ -130,7 +114,7 @@ class CmdTeamCreateCSV(CmdBase):
         CDESC, CSV_FNAME = args[0], args[1]
 
         college_group = college_find( CDESC )
-        newusers = self.form_new_users( CSV_FNAME )
+        newusers = self.form_new_users( CSV_FNAME, college_group )
 
         print
         print "Will create %i users" % len(newusers)
@@ -183,7 +167,7 @@ class CmdTeamCreateCSV(CmdBase):
                 g.user_add(newusers)
                 g.save()
 
-    def form_new_users(self, csv_fname):
+    def form_new_users(self, csv_fname, college_group):
         "Create the new user objects -- not in db yet."
         rows = self.read_csv( csv_fname )
 
@@ -196,7 +180,9 @@ class CmdTeamCreateCSV(CmdBase):
         for row in rows:
             fname, lname, email = [row[colmap[x]] for x in ["fname", "lname", "email"]]
 
-            u = sr.user( new_username(fname, lname, tmpset = [x.username for x in newusers]) )
+            tmpset = [x.username for x in newusers]
+            uname = sr.new_username(college_group, fname, lname, tmpset)
+            u = sr.user( uname )
             u.cname = fname.strip().capitalize()
             u.sname = lname.strip().capitalize()
             u.email = email.strip().lower()
