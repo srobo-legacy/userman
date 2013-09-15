@@ -2,9 +2,9 @@
 import os, sys, csv, sr, re
 import mailer
 
-TEAM_PREFIX = 'team-'
+TEAM_PREFIX = sr.TEAM_PREFIX
 TEAM_PATTERN = "^%s[0-9A-Z]+$" % TEAM_PREFIX
-COLLEGE_PREFIX = 'college-'
+COLLEGE_PREFIX = sr.COLLEGE_PREFIX
 COLLEGE_PATTERN = "^%s[0-9]+$" % COLLEGE_PREFIX
 
 def get_team(tid):
