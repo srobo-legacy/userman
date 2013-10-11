@@ -37,7 +37,7 @@ def create_team_user(tla, college_name):
 
 def set_password(tu):
     passwd = sr.users.GenPasswd()
-    tu.passwd = passwd
+    tu.set_passwd(new = passwd)
     tu.save()
     return passwd
 
