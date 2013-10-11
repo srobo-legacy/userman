@@ -5,13 +5,13 @@ import mailer
 TEAM_PREFIX = sr.TEAM_PREFIX
 TEAM_PATTERN = "^%s[0-9A-Z]+$" % TEAM_PREFIX
 COLLEGE_PREFIX = sr.COLLEGE_PREFIX
-COLLEGE_PATTERN = "^%s[0-9]+$" % COLLEGE_PREFIX
+COLLEGE_PATTERN = "^%s[0-9A-Z]+$" % COLLEGE_PREFIX
 
 def get_team(tid):
     return sr.group( TEAM_PREFIX + str(tid) )
 
-def get_college(num):
-    return sr.group( "%s%i" % (COLLEGE_PREFIX, num) )
+def get_college(cid):
+    return sr.group( COLLEGE_PREFIX + str(cid) )
 
 def search_colleges(s):
     "Search through the colleges to find one with s its name"
