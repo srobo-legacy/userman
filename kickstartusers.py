@@ -47,7 +47,7 @@ def create_all(team_source):
     passwds = {}
 
     for tla, college_name in team_source:
-        tu = create_team_user(tla, college_name)
+        tu = create_team_user(tla.lower(), college_name)
         passwds[tu.username] = set_password(tu)
 
         ensure_college(tla, college_name, tu)
