@@ -30,7 +30,8 @@ for line in lines[1:]:
         break
     parts = line.split('||', 4)
     x, tla, college_name, rest = [parts[i].strip() for i in xrange(4)]
-    team_map[tla] = college_name
+    if not tla.startswith('\'\'\''):
+        team_map[tla] = college_name
 
 for tla, college_name in team_map.iteritems():
     print "{0},{1}".format(tla, college_name)
