@@ -1,10 +1,14 @@
 #!/usr/bin/python
 # By Alex Monk, based on importusers.py by Jeremy Morse
 
-TEAMS_DIR = "priv/teams"
-
 import sys, csv, yaml, glob, json, urllib2
 import sr, mailer, c_teams
+
+TEAMS_DIR = "priv/teams"
+
+# Optionally allow the command line to specify where the contact info files are
+if len(sys.argv) == 2:
+	TEAMS_DIR = sys.argv[1]
 
 teamTLAs = [str(team)[:3] for team in json.load(urllib2.urlopen('https://www.studentrobotics.org/resources/2014/teams.json'))]
 
