@@ -39,6 +39,7 @@ for college_id in set(teamTLAs): # Remove duplicates
 	teamGroups = []
 	for team in teams:
 		teamGroup = c_teams.get_team(team)
+		teamsGroups.append(teamGroup)
 		if not teamGroup.in_db:
 			print >>sys.stderr, "Group {0} doesn't exist".format(teamGroup.name)
 			sys.exit(1)
