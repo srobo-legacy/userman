@@ -3,15 +3,24 @@
 
 TEAMS_DIR = "priv/teams"
 
-import sys, csv, yaml, glob
+import sys, csv, yaml, glob, json, urllib2
 import sr, mailer, c_teams
 
-for filename in glob.glob(TEAMS_DIR + '/*.yaml'):
-	collegeInfo = yaml.load(open(filename))
-	if 'contacts' not in collegeInfo:
+teamTLAs = [str(team)[:3] for team in json.load(urllib2.urlopen('https://www.studentrobotics.org/resources/2014/teams.json'))]
+
+for college_id in set(teamTLAs): # Remove duplicates
+	try:
+		teamFile = open(TEAMS_DIR + '/' + college_id + '.yaml')
+	except IOError:
+		print("Error while trying to read file for college " + college_id + ", skipping...")
 		continue
+
+	collegeInfo = yaml.load(teamFile)
+	if 'contacts' not in collegeInfo or len(collegeInfo['contacts']) == 0:
+		print("College " + college_id + " have no contacts set, skipping...")
+		continue
+
 	contact = collegeInfo['contacts'][0] # Only the first contact gets an account
-	college_id = collegeInfo['teams'][0][0:3] # If there's multiple, just use the first. Limit to the first 3 characters
 	print("Working on " + college_id)
 	first_name, last_name = contact['name'].split(' ')
 
@@ -31,7 +40,7 @@ for filename in glob.glob(TEAMS_DIR + '/*.yaml'):
 	for team in teams:
 		teamGroup = c_teams.get_team(team)
 		if not teamGroup.in_db:
-			print >>sys.stderr, "Group {0} doesn't exist".format(team.name)
+			print >>sys.stderr, "Group {0} doesn't exist".format(teamGroup.name)
 			sys.exit(1)
 
 	teachers = sr.group('teachers')
