@@ -43,8 +43,8 @@ class user:
         else:
             print self.__doc__
 
-    def _get_user(self, username):
-        return sr.users.user(username)
+    def _get_user(self, username, match_case = True):
+        return sr.users.user(username, match_case)
 
     def help(self, args):
         if len(args) < 1:
@@ -65,7 +65,8 @@ Usage:
             print self.add.__doc__
             return
 
-        u = self._get_user( args[0] )
+        # Avoid creating multiple users with similar names
+        u = self._get_user( args[0], match_case = False )
 
         if u.in_db:
             print "User '%s' already exists" % ( u.username )
@@ -144,7 +145,8 @@ Usage:
             print self.auto.__doc__
             return
 
-        u = self._get_user( args[0] )
+        # Avoid creating multiple users with similar names
+        u = self._get_user( args[0], match_case = False )
 
         if u.in_db:
             print "User '%s' already exists" % (args[0] )
