@@ -106,7 +106,7 @@ Usage:
 
                 for group in groups:
                     g = sr.group(group)
-                    g.user_rm(username)
+                    g.user_rm(u.username)
                     g.save()
 
             else:
