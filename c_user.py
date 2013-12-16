@@ -43,6 +43,9 @@ class user:
         else:
             print self.__doc__
 
+    def _get_user(self, username):
+        return sr.users.user(username)
+
     def help(self, args):
         if len(args) < 1:
             print self.__doc__
@@ -62,10 +65,10 @@ Usage:
             print self.add.__doc__
             return
 
-        u = sr.users.user( args[0] )
+        u = self._get_user( args[0] )
 
         if u.in_db:
-            print "User '%s' already exists" % (args[0] )
+            print "User '%s' already exists" % ( u.username )
             return
 
         u.cname = args[1]
@@ -94,7 +97,7 @@ Usage:
             return
 
         for username in args:
-            u = sr.users.user( username )
+            u = self._get_user( username )
             groups = u.groups()
 
             if not u.in_db:
@@ -121,7 +124,7 @@ Usage:
             print self.info.__doc__
             return
 
-        u = sr.users.user( args[0] )
+        u = self._get_user( args[0] )
 
         if not u.in_db:
             print "User '%s' not found\n" % (args[0])
@@ -141,7 +144,7 @@ Usage:
             print self.auto.__doc__
             return
 
-        u = sr.users.user( args[0] )
+        u = self._get_user( args[0] )
 
         if u.in_db:
             print "User '%s' already exists" % (args[0] )
@@ -175,10 +178,10 @@ Usage:
 
         uname = args[0]
 
-        u = sr.users.user( uname )
+        u = self._get_user( uname )
 
         if not u.in_db:
-            print "User '%s' not found\n" % (args[0])
+            print "User '%s' not found\n" % ( uname )
             return
 
         if u.set_passwd( new = getpass.getpass("New password:") ):
@@ -197,10 +200,10 @@ Usage:
             return
 
         uname = args[0]
-        u = sr.users.user( uname )
+        u = self._get_user( uname )
 
         if not u.in_db:
-            print "User '%s' not found\n" % (args[0])
+            print "User '%s' not found\n" % ( uname )
             return False
 
         new_passwd = sr.users.GenPasswd()
@@ -219,10 +222,10 @@ Usage:
 
         uname = args[0]
 
-        u = sr.users.user( uname )
+        u = self._get_user( uname )
 
         if not u.in_db:
-            print "User '%s' not found\n" % (args[0])
+            print "User '%s' not found\n" % ( uname )
         else:
             groups = u.groups()
 
