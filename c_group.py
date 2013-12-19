@@ -116,7 +116,7 @@ Usage:
         """Add users to a group
 Usage:
 	group addusers GROUPNAME USERS"""
-        
+
         if len(args) < 2:
             print self.addusers.__doc__
             return
