@@ -156,5 +156,8 @@ Usage:
             print "Group '%s' not found." % ( gname )
             return
 
-        g.user_rm( users )
+        not_members = g.user_rm( users )
         g.save()
+
+        for uname in not_members:
+            print "Unable to remove non-member '%s' from '%s'" % ( gname, uname )
