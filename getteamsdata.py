@@ -25,9 +25,9 @@ with open(tmpfile) as f:
 team_map = {}
 
 # ignore the header
-for line in lines[1:]:
+for line in lines:
     if not line.startswith('||'):
-        break
+        continue
     parts = line.split('||', 4)
     x, tla, college_name, rest = [parts[i].strip() for i in xrange(4)]
     if not tla.startswith('\'\'\''):
