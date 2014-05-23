@@ -15,19 +15,17 @@ with open(tmpfile) as f:
         if line == '= Registered Schools =':
             store_lines = True
             continue
-        if line.startswith('='):
+        if line.startswith('=') or line == "Kit return statuses:":
             store_lines = False
             continue
 
-        if store_lines and len(line) > 0:
+        if store_lines and len(line) > 0 and line.startswith('||'):
             lines.append(line)
 
 team_map = {}
 
 # ignore the header
 for line in lines[1:]:
-    if not line.startswith('||'):
-        break
     parts = line.split('||', 4)
     x, tla, college_name, rest = [parts[i].strip() for i in xrange(4)]
     if not tla.startswith('\'\'\''):
