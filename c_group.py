@@ -99,7 +99,7 @@ Usage:
     def members(self, args):
         """Display group members.
 Usage:
-	group members USERNAME"""
+	group members GROUPNAME"""
 
         if len(args) < 1:
             print self.members.__doc__
