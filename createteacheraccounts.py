@@ -54,7 +54,7 @@ def read_team_data(fname):
         if 'contacts' not in y or len(y['contacts']) == 0:
             print >>sys.stderr, "No contacts record for {0}".format(fname)
             sys.exit(1)
-        the_contact = y['contacts']
+        the_contact = y['contacts'][0] # Pick the first contact
         if 'email' not in the_contact or 'name' not in the_contact:
             print >>sys.stderr,"Incomplete contact record for {0}".format(fname)
             sys.exit(1)
