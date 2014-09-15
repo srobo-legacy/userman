@@ -3,12 +3,13 @@
 
 import sys, yaml, os
 import sr, mailer, c_teams
+import argparse
 
-TEAMS_DIR = "priv/teams"
+parser = argparse.ArgumentParser()
+parser.add_argument("teamsdir", help="Working dir for teams.git")
+args = parser.parse_args()
 
-# Optionally allow the command line to specify where the contact info files are
-if len(sys.argv) == 2:
-	TEAMS_DIR = sys.argv[1]
+TEAMS_DIR = args.teamsdir
 
 # Test whether TEAMS_DIR exists
 try:
