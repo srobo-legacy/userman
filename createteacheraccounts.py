@@ -48,7 +48,7 @@ team_yaml = [x for x in team_yaml if is_taking_part_yaml(x)]
 # sanity checking it.
 
 def read_team_data(fname):
-    with open(fname) as fobj:
+    with open(os.path.join(teams_dir, fname)) as fobj:
         y = yaml.safe_load(fobj)
 
         if 'contacts' not in y or len(y['contacts']) == 0:
