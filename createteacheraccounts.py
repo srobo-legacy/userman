@@ -28,7 +28,7 @@ def add_to_team_yaml(arg, dirname, fnames):
 
 os.path.walk(teams_dir, add_to_team_yaml, None)
 
-team_yaml = [x for x in team_yaml if ".yaml" in x]
+team_yaml = [x for x in team_yaml if re.match("^[A-Z]+\.yaml$", x) != None]
 
 # Filter team records for those who actually posess a team this year.
 def is_taking_part_yaml(fname):
