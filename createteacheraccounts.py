@@ -77,55 +77,55 @@ def read_team_data(fname):
 # Iterate through teams, fetch data, and create accounts.
 
 for team_dot_yaml in team_yaml:
-	the_contact, college_tla, teams = read_team_data(team_dot_yaml)
+    the_contact, college_tla, teams = read_team_data(team_dot_yaml)
 
-	first_name, last_name = the_contact['name'].split(' ')
-	newname = sr.new_username(college_tla, first_name, last_name)
-	u = sr.users.user(newname)
-	if u.in_db:
-		print >>sys.stderr, "User {0} already exists".format(newname)
-		sys.exit(1)
+    first_name, last_name = the_contact['name'].split(' ')
+    newname = sr.new_username(college_tla, first_name, last_name)
+    u = sr.users.user(newname)
+    if u.in_db:
+        print >>sys.stderr, "User {0} already exists".format(newname)
+        sys.exit(1)
 
     # XXX jmorse, pre-supposes colleges exist
 
-	college = c_teams.get_college(college_tla)
-	if not college.in_db:
-		print >>sys.stderr, "College group {0} doesn't exist".format(college.name)
-		sys.exit(1)
+    college = c_teams.get_college(college_tla)
+    if not college.in_db:
+        print >>sys.stderr, "College group {0} doesn't exist".format(college.name)
+        sys.exit(1)
 
     # XXX jmorse, also pre-supposes groups
 
-	teamGroups = []
-	for team in teams:
-		teamGroup = c_teams.get_team(team)
-		teamGroups.append(teamGroup)
-		if not teamGroup.in_db:
-			print >>sys.stderr, "Group {0} doesn't exist".format(teamGroup.name)
-			sys.exit(1)
+    teamGroups = []
+    for team in teams:
+        teamGroup = c_teams.get_team(team)
+        teamGroups.append(teamGroup)
+        if not teamGroup.in_db:
+            print >>sys.stderr, "Group {0} doesn't exist".format(teamGroup.name)
+            sys.exit(1)
 
-	teachers = sr.group('teachers')
-	if not teachers.in_db:
-		print >>sys.stderr, "Group {0} doesn't exist".format('teachers')
-		sys.exit(1)
+    teachers = sr.group('teachers')
+    if not teachers.in_db:
+        print >>sys.stderr, "Group {0} doesn't exist".format('teachers')
+        sys.exit(1)
 
-	u.cname = first_name
-	u.sname = last_name
-	u.email = contact['email']
-	u.save()
-	u.set_lang('english')
-	u.save()
+    u.cname = first_name
+    u.sname = last_name
+    u.email = contact['email']
+    u.save()
+    u.set_lang('english')
+    u.save()
 
-	college.user_add(u)
-	college.save()
+    college.user_add(u)
+    college.save()
 
-	for team in teamGroups:
-		team.user_add(u)
-		team.save()
+    for team in teamGroups:
+        team.user_add(u)
+        team.save()
 
-	teachers.user_add(u)
-	teachers.save()
+    teachers.user_add(u)
+    teachers.save()
 
-	print "User {0} created".format(newname)
+    print "User {0} created".format(newname)
 
-	mailer.send_template("welcome", u, { "PASSWORD": u.init_passwd } )
-	print "User {0} mailed".format(newname)
+    mailer.send_template("welcome", u, { "PASSWORD": u.init_passwd } )
+    print "User {0} mailed".format(newname)
