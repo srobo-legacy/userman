@@ -64,7 +64,7 @@ def read_team_data(fname):
             sys.exit(1)
         teams = []
         for teamname in y['teams']:
-            assert(isinstance(teamname, string))
+            assert(isinstance(teamname, basestring))
             teams.append(teamname)
 
         # First team name gets used as the college name too...
