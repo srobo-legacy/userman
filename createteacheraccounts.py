@@ -4,6 +4,7 @@
 import sys, yaml, os
 import sr, mailer, c_teams
 import argparse
+import re
 
 parser = argparse.ArgumentParser()
 parser.add_argument("teamsdir", help="Working dir for teams.git")
@@ -43,8 +44,36 @@ def is_taking_part_yaml(fname):
 
 team_yaml = [x for x in team_yaml if is_taking_part_yaml(x)]
 
-print >>sys.stderr, "EUNIMPLEMENTED"
-sys.exit(1)
+# Define a function for reading all relevant team data from a yaml file, and
+# sanity checking it.
+
+def read_team_data(fname):
+    with open(fname) as fobj:
+        y = yaml.safe_load(fobj)
+
+        if 'contacts' not in y or len(y['contacts']) == 0:
+            print >>sys.stderr, "No contacts record for {0}".format(fname)
+            sys.exit(1)
+        the_contact = y['contacts']
+        if 'email' not in the_contact or 'name' not in the_contact:
+            print >>sys.stderr,"Incomplete contact record for {0}".format(fname)
+            sys.exit(1)
+
+        if 'teams' not in y or len(y['teams']) == 0:
+            print >>sys.stderr, "No teams record for {0}".format(fname)
+            sys.exit(1)
+        teams = []
+        for teamname in y['teams']:
+            assert(isinstance(teamname, string))
+            teams.append(teamname)
+
+        # First team name gets used as the college name too...
+        if re.match("^[A-Z]+$", teams[0]) == None:
+            print >>sys.stderr, "Team name \"{0}\" is not the conventional format".format(teams[0])
+            sys.exit(1)
+
+        return (the_contact, teams[0], teams)
+
 
 for college_id in set(teamTLAs): # Remove duplicates
 	try:
