@@ -10,13 +10,40 @@ TEAMS_DIR = "priv/teams"
 if len(sys.argv) == 2:
 	TEAMS_DIR = sys.argv[1]
 
+# Test whether TEAMS_DIR exists
 try:
     os.stat(TEAMS_DIR)
 except OSError:
     print >>sys.stderr, "Couldn't stat \"{0}\"".format(TEAMS_DIR)
     sys.exit(1)
 
-teamTLAs = [str(team)[:3] for team in json.load(urllib2.urlopen('https://www.studentrobotics.org/resources/2014/teams.json'))]
+# Suck a list of teams out of TEAMS_DIR
+team_yaml = []
+def add_to_team_yaml(arg, dirname, fnames):
+    if dirname == TEAMS_DIR:
+        for fname in fnames:
+            team_yaml.append(fname)
+
+os.path.walk(TEAMS_DIR, add_to_team_yaml, None)
+
+team_yaml = [x for x in team_yaml if ".yaml" in x]
+
+# Filter team records for those who actually posess a team this year.
+def is_taking_part_yaml(fname):
+    with open(os.path.join(TEAMS_DIR, fname)) as file:
+        data = yaml.safe_load(file)
+        if not data["teams"]:
+            return False
+
+        return True
+    # On failure
+    print >>sys.stderr, "Couldn't open {0}".format(fname)
+    sys.exit(1)
+
+team_yaml = [x for x in team_yaml if is_taking_part_yaml(x)]
+
+print >>sys.stderr, "EUNIMPLEMENTED"
+sys.exit(1)
 
 for college_id in set(teamTLAs): # Remove duplicates
 	try:
