@@ -9,29 +9,29 @@ parser = argparse.ArgumentParser()
 parser.add_argument("teamsdir", help="Working dir for teams.git")
 args = parser.parse_args()
 
-TEAMS_DIR = args.teamsdir
+teams_dir = args.teamsdir
 
-# Test whether TEAMS_DIR exists
+# Test whether teams_dir exists
 try:
-    os.stat(TEAMS_DIR)
+    os.stat(teams_dir)
 except OSError:
-    print >>sys.stderr, "Couldn't stat \"{0}\"".format(TEAMS_DIR)
+    print >>sys.stderr, "Couldn't stat \"{0}\"".format(teams_dir)
     sys.exit(1)
 
-# Suck a list of teams out of TEAMS_DIR
+# Suck a list of teams out of teams_dir
 team_yaml = []
 def add_to_team_yaml(arg, dirname, fnames):
-    if dirname == TEAMS_DIR:
+    if dirname == teams_dir:
         for fname in fnames:
             team_yaml.append(fname)
 
-os.path.walk(TEAMS_DIR, add_to_team_yaml, None)
+os.path.walk(teams_dir, add_to_team_yaml, None)
 
 team_yaml = [x for x in team_yaml if ".yaml" in x]
 
 # Filter team records for those who actually posess a team this year.
 def is_taking_part_yaml(fname):
-    with open(os.path.join(TEAMS_DIR, fname)) as file:
+    with open(os.path.join(teams_dir, fname)) as file:
         data = yaml.safe_load(file)
         if not data["teams"]:
             return False
@@ -48,7 +48,7 @@ sys.exit(1)
 
 for college_id in set(teamTLAs): # Remove duplicates
 	try:
-		teamFile = open(TEAMS_DIR + '/' + college_id + '.yaml')
+		teamFile = open(teams_dir + '/' + college_id + '.yaml')
 	except IOError:
 		print("Error while trying to read file for college " + college_id + ", skipping...")
 		continue
