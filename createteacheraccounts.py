@@ -74,35 +74,27 @@ def read_team_data(fname):
 
         return (the_contact, teams[0], teams)
 
+# Iterate through teams, fetch data, and create accounts.
 
-for college_id in set(teamTLAs): # Remove duplicates
-	try:
-		teamFile = open(teams_dir + '/' + college_id + '.yaml')
-	except IOError:
-		print("Error while trying to read file for college " + college_id + ", skipping...")
-		continue
+for team_dot_yaml in team_yaml:
+	the_contact, college_tla, teams = read_team_data(team_dot_yaml)
 
-	collegeInfo = yaml.load(teamFile)
-	if 'contacts' not in collegeInfo or len(collegeInfo['contacts']) == 0:
-		print("College " + college_id + " have no contacts set, skipping...")
-		continue
-
-	contact = collegeInfo['contacts'][0] # Only the first contact gets an account
-	print("Working on " + college_id)
-	first_name, last_name = contact['name'].split(' ')
-
-	newname = sr.new_username(college_id, first_name, last_name)
+	first_name, last_name = the_contact['name'].split(' ')
+	newname = sr.new_username(college_tla, first_name, last_name)
 	u = sr.users.user(newname)
 	if u.in_db:
 		print >>sys.stderr, "User {0} already exists".format(newname)
 		sys.exit(1)
 
-	college = c_teams.get_college(college_id)
+    # XXX jmorse, pre-supposes colleges exist
+
+	college = c_teams.get_college(college_tla)
 	if not college.in_db:
 		print >>sys.stderr, "College group {0} doesn't exist".format(college.name)
 		sys.exit(1)
 
-	teams = collegeInfo['teams']
+    # XXX jmorse, also pre-supposes groups
+
 	teamGroups = []
 	for team in teams:
 		teamGroup = c_teams.get_team(team)
