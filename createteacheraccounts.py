@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # By Alex Monk, based on importusers.py by Jeremy Morse
 
-import sys, csv, yaml, glob, json, urllib2, os
+import sys, yaml, os
 import sr, mailer, c_teams
 
 TEAMS_DIR = "priv/teams"
