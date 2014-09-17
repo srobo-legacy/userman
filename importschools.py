@@ -82,9 +82,6 @@ for team_dot_yaml in team_yaml:
     first_name, last_name = the_contact['name'].split(' ')
     newname = sr.new_username(college_tla, first_name, last_name)
     u = sr.users.user(newname)
-    if u.in_db:
-        print >>sys.stderr, "User {0} already exists".format(newname)
-        sys.exit(1)
 
     # XXX jmorse, pre-supposes colleges exist
 
