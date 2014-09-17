@@ -1,0 +1,31 @@
+Subject: Welcome to Student Robotics
+Hello $NAME,
+
+You now have a shiny new Student Robotics team-leader account. This will let
+you access the Student Robotics facilities, including the forums and the
+software development environment for your robot. You can also register and
+manage users in your team.
+
+Your username is: $USERNAME
+Your password is: $PASSWORD
+
+Your registered email address is $EMAIL.
+
+You can change your password at:
+
+        https://www.studentrobotics.org/password
+
+If you have any problems with your account then please get in touch by
+emailing accounts@studentrobotics.org.
+
+To manage your team, please visit the user management page:
+
+        https://www.studentrobotics.org/userman
+
+The documentation for which is at the bottom of this page:
+
+        https://www.studentrobotics.org/docs/user_accounts
+
+Thanks,
+
+The Student Robotics Team
