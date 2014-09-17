@@ -83,6 +83,9 @@ if not teachers.in_db:
 
 # Iterate through teams, fetch data, and create accounts.
 
+count = 0
+skipped = 0
+
 for team_dot_yaml in team_yaml:
     the_contact, college_tla, teams = read_team_data(team_dot_yaml)
 
@@ -97,6 +100,7 @@ for team_dot_yaml in team_yaml:
 
     if college.in_db or len([x for x in teamGroups if x.in_db]) != 0:
         print >>sys.stderr, "College {0} or associated teams already in db, skipping import".format(college_tla)
+        skipped += 1
         continue
 
     print >>sys.stderr, "Creating groups + account for {0}".format(college_tla)
@@ -126,3 +130,6 @@ for team_dot_yaml in team_yaml:
 
     mailer.send_template("teacher_welcome", u, { "PASSWORD": u.init_passwd } )
     print "User {0} mailed".format(newname)
+    count += 1
+
+print >>sys.stderr, "Created {0} teams and skipped {1} more".format(count, skipped)
