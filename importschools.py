@@ -99,6 +99,8 @@ for team_dot_yaml in team_yaml:
         print >>sys.stderr, "College {0} or associated teams already in db, skipping import".format(college_tla)
         continue
 
+    print >>sys.stderr, "Creating groups + account for {0}".format(college_tla)
+
     first_name, last_name = the_contact['name'].split(' ')
     newname = sr.new_username(college_tla, first_name, last_name)
     u = sr.users.user(newname)
