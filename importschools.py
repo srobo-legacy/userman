@@ -74,6 +74,13 @@ def read_team_data(fname):
 
         return (the_contact, teams[0], teams)
 
+# Grab a useful group
+
+teachers = sr.group('teachers')
+if not teachers.in_db:
+    print >>sys.stderr, "Group {0} doesn't exist".format('teachers')
+    sys.exit(1)
+
 # Iterate through teams, fetch data, and create accounts.
 
 for team_dot_yaml in team_yaml:
@@ -95,11 +102,6 @@ for team_dot_yaml in team_yaml:
     first_name, last_name = the_contact['name'].split(' ')
     newname = sr.new_username(college_tla, first_name, last_name)
     u = sr.users.user(newname)
-
-    teachers = sr.group('teachers')
-    if not teachers.in_db:
-        print >>sys.stderr, "Group {0} doesn't exist".format('teachers')
-        sys.exit(1)
 
     u.cname = first_name
     u.sname = last_name
