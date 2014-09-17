@@ -107,7 +107,7 @@ for team_dot_yaml in team_yaml:
 
     u.cname = first_name
     u.sname = last_name
-    u.email = contact['email']
+    u.email = the_contact['email']
     u.save()
     u.set_lang('english')
     u.save()
