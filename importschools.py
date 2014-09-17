@@ -79,26 +79,22 @@ def read_team_data(fname):
 for team_dot_yaml in team_yaml:
     the_contact, college_tla, teams = read_team_data(team_dot_yaml)
 
-    first_name, last_name = the_contact['name'].split(' ')
-    newname = sr.new_username(college_tla, first_name, last_name)
-    u = sr.users.user(newname)
-
-    # XXX jmorse, pre-supposes colleges exist
+    # Does the desired college / team already exist?
 
     college = c_teams.get_college(college_tla)
-    if not college.in_db:
-        print >>sys.stderr, "College group {0} doesn't exist".format(college.name)
-        sys.exit(1)
-
-    # XXX jmorse, also pre-supposes groups
 
     teamGroups = []
     for team in teams:
         teamGroup = c_teams.get_team(team)
         teamGroups.append(teamGroup)
-        if not teamGroup.in_db:
-            print >>sys.stderr, "Group {0} doesn't exist".format(teamGroup.name)
-            sys.exit(1)
+
+    if college.in_db or len([x for x in teamGroups if x.in_db]) != 0:
+        print >>sys.stderr, "College {0} or associated teams already in db, skipping import".format(college_tla)
+        continue
+
+    first_name, last_name = the_contact['name'].split(' ')
+    newname = sr.new_username(college_tla, first_name, last_name)
+    u = sr.users.user(newname)
 
     teachers = sr.group('teachers')
     if not teachers.in_db:
