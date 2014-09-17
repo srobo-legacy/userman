@@ -124,5 +124,5 @@ for team_dot_yaml in team_yaml:
 
     print "User {0} created".format(newname)
 
-    mailer.send_template("welcome", u, { "PASSWORD": u.init_passwd } )
+    mailer.send_template("teacher_welcome", u, { "PASSWORD": u.init_passwd } )
     print "User {0} mailed".format(newname)
