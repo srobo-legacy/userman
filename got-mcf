@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+
+import argparse
+import mailer
+import sr
+import sys
+
+parser = argparse.ArgumentParser()
+parser.add_argument("username", help="Username of MCF holder")
+
+args = parser.parse_args()
+
+g = sr.group('media-consent')
+if not g.in_db:
+    print >>sys.stderr, "Couldn't look up media-consent group"
+    sys.exit(1)
+
+u = sr.user(args.username)
+if not u.in_db:
+    print >>sys.stderr, "Couldn't look up user in db"
+    sys.exit(1)
+
+print "Adding user to mcf group"
+
+if u.username in g.members:
+    print >>sys.stderr, "User already in MCF group!"
+    sys.exit(1)
+
+g.members.append(u.username)
+g.save()
+
+print "Sending email"
+
+mailer.send_template( "mcf_receive", u )
+print "Successfully mailed user"
