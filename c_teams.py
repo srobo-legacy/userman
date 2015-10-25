@@ -13,9 +13,12 @@ def get_team(tid):
 def get_college(cid):
     return sr.group( COLLEGE_PREFIX + str(cid) )
 
+def list_groups_with_prefix(prefix):
+    return sr.groups.list("%s*" % prefix)
+
 def search_colleges(s):
     "Search through the colleges to find one with s its name"
-    groups = sr.groups.list("%s*" % COLLEGE_PREFIX)
+    groups = list_groups_with_prefix(COLLEGE_PREFIX)
 
     res = []
 
@@ -92,19 +95,27 @@ class CmdBase:
                 print "Usage: %s" % self.usage
             sys.exit(1)
 
-class CmdTeamList(CmdBase):
-    desc = "List the teams"
+class CmdList(CmdBase):
     max_args = 0
 
     def __init__(self, args):
         CmdBase.__init__(self, args)
 
-        glist = sr.groups.list()
+    def get_names(self, prefix, pattern):
+        glist = list_groups_with_prefix(prefix)
+        regex = re.compile(pattern)
+        filtered = [gname for gname in glist if regex.match(gname)]
+        return filtered
 
-        for gname in glist:
-            if re.match( '^' + TEAM_PREFIX + "[A-Z]{3}[0-9]?$", gname ) == None:
-                continue
+class CmdTeamList(CmdList):
+    desc = "List the teams"
 
+    def __init__(self, args):
+        CmdList.__init__(self, args)
+
+        names = self.get_names(TEAM_PREFIX, TEAM_PATTERN)
+
+        for gname in names:
             print gname
 
 class CmdTeamCreateCSV(CmdBase):
@@ -383,19 +394,15 @@ class CmdTeamInfo(CmdBase):
         else:
             print "No associated college."
 
-class CmdCollegeList(CmdBase):
+class CmdCollegeList(CmdList):
     desc = "List colleges"
-    max_args = 0
 
     def __init__(self, args):
-        CmdBase.__init__(self, args)
+        CmdList.__init__(self, args)
 
-        glist = sr.groups.list()
+        names = self.get_names(COLLEGE_PREFIX, COLLEGE_PATTERN)
 
-        for gname in glist:
-            if re.match( COLLEGE_PATTERN, gname ) == None:
-                continue
-
+        for gname in names:
             g = sr.group(gname)
 
             if hasattr(g, "desc"):
@@ -404,21 +411,6 @@ class CmdCollegeList(CmdBase):
                 desc = "(no description)"
 
             print "%s: %s" % (gname, desc)
-            print "\t %i members." % len(g.members)
-
-            teams = set()
-            for uname in g.members:
-                u = sr.user(uname)
-                assert u.in_db
-
-                for gname in u.groups():
-                    if re.match( "^team[0-9]+$", gname ) != None:
-                        teams.add(gname)
-
-            print "\t %i teams: %s" % (len(teams),
-                                    ", ".join([x[4:] for x in teams]) )
-            print
-
 
 class CmdCollegeInfo(CmdBase):
     desc = "Show information about a college"
