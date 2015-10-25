@@ -1,9 +1,12 @@
-#!/bin/env python
-import sr, sys, os
+#!/usr/bin/env python
+
+import os
+import sys
+
+import sr
 
 if len(sys.argv) < 2:
-    print "Usage: student-to-teacher USERNAME"
-    sys.exit(1)
+    exit("Usage: student-to-teacher USERNAME")
 
 UNAMES = sys.argv[1:]
 
@@ -11,8 +14,7 @@ for UNAME in UNAMES:
     u = sr.user(UNAME)
 
     if not u.in_db:
-        print "User \"%s\" does not exist." % UNAME
-        sys.exit(1)
+        exit("User \"%s\" does not exist." % UNAME)
 
 for UNAME in UNAMES:
     u = sr.user(UNAME)
