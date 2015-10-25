@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import os
 import sys
 
@@ -10,11 +12,11 @@ if len(sys.argv) < 2:
 
 UNAMES = sys.argv[1:]
 
-for UNAME in UNAMES:
-    u = sr.user(UNAME)
-
-    if not u.in_db:
-        exit("User \"%s\" does not exist." % UNAME)
+missing = [uname for uname in UNAMES if not sr.user.exists(uname)]
+if any(missing):
+    print("User(s) '%s' do no exist." % "', '".join(missing), file=sys.stderr)
+    print("No changes made.", file=sys.stderr)
+    exit(1)
 
 for UNAME in UNAMES:
     u = sr.user(UNAME)
