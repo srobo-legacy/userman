@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
+"""Record that a user has provided us with a Media Consent Form.
+"""
+
 import argparse
 import mailer
 import sr
 import sys
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("username", help="Username of MCF holder")
 
 args = parser.parse_args()
