@@ -332,7 +332,7 @@ class CmdTeamInfo(CmdBase):
         tid = args[0]
         tg = get_team(tid)
         if not tg.in_db:
-            print "Team %i do not exist" % tid
+            print "Team '%s' do not exist" % tid
             sys.exit(1)
 
         # Group people into teachers, students, mentors and misc:
