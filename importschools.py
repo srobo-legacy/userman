@@ -62,6 +62,11 @@ def read_team_data(fname):
         if 'teams' not in y or len(y['teams']) == 0:
             print >>sys.stderr, "No teams record for {0}".format(fname)
             sys.exit(1)
+
+        if 'name' not in y:
+            print >>sys.stderr, "No school name record for {0}".format(fname)
+            sys.exit(1)
+
         teams = []
         for teamname in y['teams']:
             assert(isinstance(teamname, basestring))
@@ -72,7 +77,7 @@ def read_team_data(fname):
             print >>sys.stderr, "Team name \"{0}\" is not the conventional format".format(teams[0])
             sys.exit(1)
 
-        return (the_contact, teams[0], teams)
+        return (the_contact, teams[0], teams, y['name'])
 
 # Grab a useful group
 
@@ -87,7 +92,7 @@ count = 0
 skipped = 0
 
 for team_dot_yaml in team_yaml:
-    the_contact, college_tla, teams = read_team_data(team_dot_yaml)
+    the_contact, college_tla, teams, team_name = read_team_data(team_dot_yaml)
 
     # Does the desired college / team already exist?
 
@@ -117,6 +122,7 @@ for team_dot_yaml in team_yaml:
     u.save()
 
     college.user_add(u)
+    college.desc = team_name
     college.save()
 
     for team in teamGroups:
