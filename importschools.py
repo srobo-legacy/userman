@@ -32,14 +32,14 @@ except OSError:
 
 # Suck a list of teams out of teams_dir
 team_yaml = []
-def add_to_team_yaml(arg, dirname, fnames):
+def add_to_team_yaml(_, dirname, fnames):
     if dirname == teams_dir:
         for fname in fnames:
             team_yaml.append(fname)
 
 os.path.walk(teams_dir, add_to_team_yaml, None)
 
-team_yaml = [x for x in team_yaml if re.match("^[A-Z]+\.yaml$", x) != None]
+team_yaml = [x for x in team_yaml if re.match(r"^[A-Z]+\.yaml$", x) != None]
 
 # Filter team records for those who actually posess a team this year.
 def is_taking_part_yaml(fname):
@@ -103,7 +103,7 @@ count = 0
 skipped = 0
 
 for team_dot_yaml in team_yaml:
-    the_contact, college_tla, teams, team_name = read_team_data(team_dot_yaml)
+    team_leader, college_tla, teams, team_name = read_team_data(team_dot_yaml)
 
     # Does the desired college / team already exist?
 
@@ -121,13 +121,13 @@ for team_dot_yaml in team_yaml:
 
     print >>sys.stderr, "Creating groups + account for {0}".format(college_tla)
 
-    first_name, last_name = the_contact['name'].split(' ')
+    first_name, last_name = team_leader['name'].split(' ')
     newname = sr.new_username(college_tla, first_name, last_name)
     u = sr.users.user(newname)
 
     u.cname = first_name
     u.sname = last_name
-    u.email = the_contact['email']
+    u.email = team_leader['email']
     u.save()
     u.set_lang('english')
     u.save()
