@@ -14,6 +14,11 @@ import sr
 
 parser = argparse.ArgumentParser()
 parser.add_argument("teamsdir", help="Working dir for teams.git")
+parser.add_argument(
+    "--no-emails",
+    action='store_true',
+    help="Don't send emails to the team-leaders"
+)
 args = parser.parse_args()
 
 teams_dir = args.teamsdir
@@ -140,8 +145,10 @@ for team_dot_yaml in team_yaml:
 
     print "User {0} created".format(newname)
 
-    mailer.send_template("teacher_welcome", u, { "PASSWORD": u.init_passwd } )
-    print "User {0} mailed".format(newname)
+    if not args.no_emails:
+        mailer.send_template("teacher_welcome", u, { "PASSWORD": u.init_passwd } )
+        print "User {0} mailed".format(newname)
+
     count += 1
 
 print >>sys.stderr, "Created {0} teams and skipped {1} more".format(count, skipped)
