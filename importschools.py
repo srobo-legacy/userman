@@ -1,10 +1,16 @@
 #!/usr/bin/env python
 # By Alex Monk, based on importusers.py by Jeremy Morse
 
-import sys, yaml, os
-import sr, mailer, c_teams
 import argparse
+import os
 import re
+import sys
+
+import yaml
+
+import c_teams
+import mailer
+import sr
 
 parser = argparse.ArgumentParser()
 parser.add_argument("teamsdir", help="Working dir for teams.git")
