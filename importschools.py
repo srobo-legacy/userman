@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # By Alex Monk, based on importusers.py by Jeremy Morse
 
 import sys, yaml, os
