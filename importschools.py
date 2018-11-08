@@ -121,7 +121,8 @@ for team_dot_yaml in team_yaml:
 
     print >>sys.stderr, "Creating groups + account for {0}".format(college_tla)
 
-    first_name, last_name = team_leader['name'].split(' ')
+    # Split at most once -- assume additional name parts go in the last name
+    first_name, last_name = team_leader['name'].split(' ', 1)
     newname = sr.new_username(college_tla, first_name, last_name)
     u = sr.users.user(newname)
 
